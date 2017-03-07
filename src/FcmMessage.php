@@ -108,12 +108,7 @@ class FcmMessage
             'priority'     => $this->priority,
         ];
 
-        if ($this->toGroup != null) {
-            $data['registration_ids'] = $this->toGroup;
-        }
-        else {
-            $data['to'] = $this->to;
-        }
+        $data['registration_ids'] = $this->toGroup;
 
         return json_encode($data);
     }
