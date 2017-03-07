@@ -39,11 +39,17 @@ class FcmChannel
         $message = $notification->toFCM($notifiable);
 
         if (is_null($message->getTo())) {
-            if (!$to = $notifiable->routeNotificationFor('fcm')) {
-                return;
-            }
+            $to = $notifiable->routeNotificationFor('fcm');
 
-            $message->to($to);
+            if (is_array($to) && !empty($to)) {
+              $message->toGroup($to);
+            }
+            else if (is_string($to) && !empty($to)) {
+              $message->to($to);
+            }
+            else {
+              return;
+            }
         }
 
         $this->client->post(self::API_URI, [

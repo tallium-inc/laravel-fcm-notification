@@ -16,6 +16,10 @@ class FcmMessage
      */
     private $to;
     /**
+    * @var array
+    */
+    private $toGroup;
+    /**
      * @var array
      */
     private $notification;
@@ -23,6 +27,7 @@ class FcmMessage
      * @var array
      */
     private $data;
+
     /**
      * @var string normal|high
      */
@@ -42,6 +47,12 @@ class FcmMessage
         }
 
         return $this;
+    }
+
+    public function toGroup($to)
+    {
+        if (!is_array($to)) $to = [$to];
+        $this->toGroup = $to;
     }
 
     /**
@@ -91,11 +102,19 @@ class FcmMessage
      */
     public function formatData()
     {
-        return json_encode([
+        $data = [
             'data'         => $this->data,
             'notification' => $this->notification,
             'priority'     => $this->priority,
-            'to'           => $this->to
-        ]);
+        ];
+
+        if ($this->toGroup != null) {
+            $data['registration_ids'] = $this->toGroup;
+        }
+        else {
+            $data['to'] = $this->to;
+        }
+
+        return json_encode($data);
     }
 }
