@@ -41,11 +41,8 @@ class FcmChannel
         if (is_null($message->getTo())) {
             $to = $notifiable->routeNotificationFor('fcm');
 
-            if (is_array($to) && !empty($to)) {
-              $message->toGroup($to);
-            }
-            else if (is_string($to) && !empty($to)) {
-              $message->to($to);
+            if (count($to)) {
+               $message->toGroup($to);
             }
             else {
               return;
