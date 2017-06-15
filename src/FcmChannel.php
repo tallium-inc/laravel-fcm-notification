@@ -46,7 +46,7 @@ class FcmChannel
                   $message->toGroup($to);
               }
               else {
-                  return;
+                  continue;
               }
           }
 
