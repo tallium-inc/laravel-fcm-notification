@@ -35,27 +35,29 @@ class FcmChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        /** @var FcmMessage $message */
-        $message = $notification->toFCM($notifiable);
+      $messages = $notification->toFCM($notifiable);
 
-        if (is_null($message->getTo())) {
-            $to = $notifiable->routeNotificationFor('fcm');
+      foreach ($messages as $format => $message) {
 
-            if (count($to)) {
-               $message->toGroup($to);
-            }
-            else {
-              return;
-            }
-        }
+          if (is_null($message->getTo())) {
+              $to = $notifiable->routeNotificationFor('fcm' . ucfirst($format));
 
-        $this->client->post(self::API_URI, [
-            'headers' => [
-                'Authorization' => 'key=' . $this->getApiKey(),
-                'Content-Type'  => 'application/json',
-            ],
-            'body'    => $message->formatData(),
-        ]);
+              if (count($to)) {
+                  $message->toGroup($to);
+              }
+              else {
+                  return;
+              }
+          }
+
+          $this->client->post(self::API_URI, [
+              'headers' => [
+                  'Authorization' => 'key=' . $this->getApiKey(),
+                  'Content-Type'  => 'application/json',
+              ],
+              'body'    => $message->formatData(),
+          ]);
+      }
     }
 
     /**
